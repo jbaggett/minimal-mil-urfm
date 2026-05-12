@@ -115,8 +115,9 @@ from the BUV + WHBUS public sources.
    └── summary.json    # aggregate AUROC mean ± SD across the 5 folds
    ```
 
-A single fold takes ~10-20 minutes on an A100 (~1-2 hours on a consumer
-GPU); the full 5-fold sweep is ~1-2 hours / ~6-10 hours respectively.
+The full 5-fold sweep takes about **15 minutes on an RTX 5090** (~3 min/fold),
+and should be roughly comparable on an A100 or RTX 4090. Older consumer GPUs
+(RTX 3090, V100) should expect 30–60 minutes total.
 
 ### Fine-tune-recipe variants (sweep these to compare approaches)
 

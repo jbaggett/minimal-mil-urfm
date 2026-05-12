@@ -1,7 +1,7 @@
 """Bag dataset for MIL fine-tuning.
 
 Reads a manifest CSV that conforms to the public-bus-mil schema
-(see https://github.com/jbaggett/public-bus-mil), and yields one bag at a
+(see the companion benchmark repository), and yields one bag at a
 time as (frames_tensor, bag_label, bag_id). Frames are loaded from the
 ``images_dir`` that the manifest refers to.
 

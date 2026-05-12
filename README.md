@@ -5,12 +5,13 @@ learning fine-tuning for breast ultrasound on top of any ViT-B/16-compatible
 backbone — including **URFM** (Kang et al. 2025), **USF-MAE**, **UltraFedFM**,
 or a plain ImageNet ViT.
 
-Designed to pair with the [`public-bus-mil` benchmark](https://github.com/jbaggett/public-bus-mil)
-as a complete fine-tuning recipe you can adapt and report against.
+Designed to pair with the companion `public-bus-mil` benchmark
+(anonymous mirror linked in the manuscript) as a complete fine-tuning recipe
+you can adapt and report against.
 
 The code is intentionally tight (~1,000 lines) so the recipe is legible and
-easy to fork. No internal Mayo or institution-specific code; everything
-runs on public weights + public data.
+easy to fork. No internal or institution-specific code; everything runs on
+public weights + public data.
 
 ---
 
@@ -56,9 +57,10 @@ pip install -e .
 pip install -e ".[benchmark,dev]"
 ```
 
-The benchmark extra installs the [`public-bus-mil`](https://github.com/jbaggett/public-bus-mil)
-package, which provides the bag-construction CLI you'll need to build the
-training/evaluation cohort from the BUV + WHBUS public sources.
+The benchmark extra installs the companion `public-bus-mil` package
+(anonymous mirror linked in the manuscript), which provides the
+bag-construction CLI you'll need to build the training/evaluation cohort
+from the BUV + WHBUS public sources.
 
 ---
 
@@ -68,7 +70,7 @@ training/evaluation cohort from the BUV + WHBUS public sources.
    BUV + WHBUS source downloads):
 
    ```bash
-   # See https://github.com/jbaggett/public-bus-mil for download links
+   # See the companion public-bus-mil README for download links
    pip install public-bus-mil
    build-bus-mil-bags \
        --dataset both \
@@ -176,7 +178,7 @@ for a minimal example.
 
 ---
 
-## Hyperparameters (default values match the recipe used in Paper 2)
+## Hyperparameters (default values match the recipe used in the companion paper)
 
 | Knob | Default | CLI flag |
 |---|---|---|
@@ -206,7 +208,7 @@ for a minimal example.
   competitive baseline. With 366 bags in `public-bus-mil` you should
   expect AUROC roughly in the 0.75–0.85 range; clinical-scale training
   (tens of thousands of bags) reaches 0.92+ on the same architecture
-  per Paper 2 but requires private data.
+  per the companion paper but requires private data.
 - **Not optimized.** Bag iteration is one-at-a-time with no gradient
   accumulation. Adding a real bag-aware sampler + multi-GPU would
   matter for larger cohorts.
@@ -246,5 +248,5 @@ If you use this code, please cite:
 - The backbone you're using (URFM, USF-MAE, UltraFedFM, etc.) per its
   source paper.
 - The `public-bus-mil` benchmark (separate Zenodo DOI; see its README).
-- (Optional) Paper 2 if your fine-tuning recipe specifically uses the
-  DSMIL + soft-top-k combination introduced there.
+- (Optional) the companion paper if your fine-tuning recipe specifically
+  uses the DSMIL + soft-top-k combination introduced there.

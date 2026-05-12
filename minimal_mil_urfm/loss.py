@@ -8,7 +8,7 @@ softmax-weighted average of per-instance BCE losses across the top-K
 instances by score. Helps spatial localization in attention rollout
 without lesion-level annotations.
 
-Reference: Paper 2 (Baggett et al. 2026, in submission).
+Reference: the companion paper (in submission).
 """
 from __future__ import annotations
 

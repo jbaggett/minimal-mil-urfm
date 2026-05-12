@@ -1,7 +1,7 @@
 """Split utilities — works against the public-bus-mil manifest 'fold' column.
 
 The public-bus-mil benchmark writes a 1..5 fold column to its manifest.csv
-(see https://github.com/jbaggett/public-bus-mil). This module just gives
+(see the companion benchmark repository). This module just gives
 you a convenient way to ask "which bag_ids are in the train / val / test
 partition for fold N?" without re-deriving anything from scratch.
 

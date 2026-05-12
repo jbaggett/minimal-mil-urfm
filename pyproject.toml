@@ -5,9 +5,6 @@ description = "Minimal MIL fine-tuning pipeline for breast ultrasound with LoRA 
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
-authors = [
-    {name = "Jeffrey S. Baggett"},
-]
 dependencies = [
     "torch>=2.0",
     "timm>=1.0",

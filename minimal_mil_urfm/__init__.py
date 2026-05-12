@@ -3,9 +3,8 @@ for breast ultrasound on top of any ViT-B/16-compatible timm backbone.
 
 Headline use case: fine-tune URFM (Kang et al. 2025,
 https://github.com/sonovision-ai/URFM) with LoRA rank-8 adapters and a
-DSMIL aggregation head on the public-bus-mil benchmark
-(https://github.com/jbaggett/public-bus-mil) using 5-fold patient-grouped
-cross-validation.
+DSMIL aggregation head on the companion public-bus-mil benchmark using
+5-fold patient-grouped cross-validation.
 
 The backbone is supplied by the user via a timm model name (`vit_base_patch16_224`
 by default) plus an optional checkpoint path. Several ultrasound-pretrained

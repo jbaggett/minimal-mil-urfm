@@ -182,14 +182,24 @@ def _load_state_dict_any(path_or_repo: str) -> dict:
     else:
         path = path_or_repo
     obj = torch.load(path, map_location="cpu", weights_only=False)
-    if isinstance(obj, dict) and "model" in obj and "epoch" in obj:
-        # MAE-style checkpoint: {'model': state_dict, 'epoch': N, ...}
+    if not isinstance(obj, dict):
+        raise ValueError(f"Cannot extract state_dict from {path}; got {type(obj)}")
+    # Prefer EMA weights (typically cleaner — no `module.` prefix), then
+    # state_dict, then the dict itself. URFM's `model` key is a string
+    # (the architecture name) so we never want to use it as a state_dict.
+    for key in ("ema_state_dict", "state_dict", "model_ema", "weights"):
+        if key in obj and isinstance(obj[key], dict):
+            return obj[key]
+    # Some MAE checkpoints store weights directly under "model"
+    if "model" in obj and isinstance(obj["model"], dict):
         return obj["model"]
-    if isinstance(obj, dict) and "state_dict" in obj:
-        return obj["state_dict"]
-    if isinstance(obj, dict):
+    # Last resort: treat the whole dict as a state_dict iff it has only
+    # tensor values (no metadata fields).
+    if all(hasattr(v, "shape") for v in obj.values()):
         return obj
-    raise ValueError(f"Cannot extract state_dict from {path}")
+    raise ValueError(
+        f"Cannot find a state_dict in {path}; top-level keys: {list(obj.keys())}"
+    )
 
 
 def _filter_mae_encoder_keys(sd: dict) -> dict:

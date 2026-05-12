@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Build artifacts
+build/
+dist/
+*.egg
+
+# Data / weights / runs — never check these in
+data/
+weights/
+runs/
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+
+# Training output
+results/
+outputs/
+predictions/
+*.npy
+*.npz

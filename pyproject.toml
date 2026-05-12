@@ -1,0 +1,40 @@
+[project]
+name = "minimal-mil-urfm"
+version = "0.1.0"
+description = "Minimal MIL fine-tuning pipeline for breast ultrasound with LoRA adapters over a ViT-B/16 backbone (URFM, USF-MAE, UltraFedFM, or any compatible timm ViT)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Jeffrey S. Baggett"},
+]
+dependencies = [
+    "torch>=2.0",
+    "timm>=1.0",
+    "peft>=0.10",
+    "numpy>=1.23",
+    "pillow>=9.0",
+    "pandas>=1.5",
+    "scikit-learn>=1.1",
+    "tqdm>=4.60",
+]
+
+[project.optional-dependencies]
+benchmark = ["public-bus-mil>=0.3.0"]
+dev = ["pytest>=7.0"]
+hf = ["huggingface_hub>=0.20"]
+
+[project.scripts]
+mmu-train = "minimal_mil_urfm.cli:train_main"
+mmu-eval = "minimal_mil_urfm.cli:eval_main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["minimal_mil_urfm*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"

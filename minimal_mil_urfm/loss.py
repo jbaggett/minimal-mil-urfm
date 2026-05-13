@@ -1,12 +1,15 @@
 """Bag BCE + soft-top-k auxiliary loss.
 
-Bag loss is binary cross-entropy on the bag logit.
+Bag loss is binary cross-entropy on the bag logit (output of the MIL
+aggregator).
 
-The soft-top-k auxiliary loss encourages the top-K instance logits within
-each bag to align with the bag label. It is computed as a temperature-
-softmax-weighted average of per-instance BCE losses across the top-K
-instances by score. Helps spatial localization in attention rollout
-without lesion-level annotations.
+The soft-top-k auxiliary loss provides a second bag-level supervision
+signal through a different aggregation path: it takes the top-K instance
+logits, softmax-weights them with a temperature into a single aggregated
+logit, and applies BCE between that aggregate and the bag label. In the
+zero-temperature limit this reduces to BCE on the hard-max instance; at
+large temperature it tends toward BCE on the mean of the top-K. Helps
+spatial localization in attention rollout without lesion-level annotations.
 
 Reference: Paper 2 (Baggett et al. 2026, in submission).
 """
@@ -33,11 +36,21 @@ def soft_topk_aux_loss(
     k: int = 5,
     temperature: float = 0.5,
 ) -> torch.Tensor:
-    """Soft top-K auxiliary loss for one bag.
+    """Soft top-K auxiliary loss for one bag (BCE on the soft-pooled logit).
 
-    Picks the top min(k, N_frames) instance logits, applies a softmax over
-    them with `temperature`, then computes a softmax-weighted BCE of each
-    of those K against the bag label.
+    Picks the top min(k, N_frames) instance logits, softmax-weights them
+    with `temperature` into a single aggregated logit, then applies BCE
+    between that aggregate and the bag label.
+
+    Formally::
+
+        agg = sum_i w_i * s_i        where  w_i = softmax(s_i / tau)
+        loss = BCE(agg, y_bag)
+
+    This matches the formulation used to train the companion paper's
+    model; do not confuse it with the alternative `sum_i w_i * BCE(s_i, y)`
+    weighted-sum-of-per-instance-BCEs formulation, which has different
+    gradients.
 
     Returns 0 if the bag has fewer than 1 instance (defensive).
     """
@@ -49,13 +62,14 @@ def soft_topk_aux_loss(
     k_eff = min(k, n)
     top_logits, _idx = torch.topk(instance_logits, k=k_eff, largest=True, sorted=False)
 
-    # Per-instance BCE
-    target = bag_label.float().expand_as(top_logits)
-    bce = F.binary_cross_entropy_with_logits(top_logits, target, reduction="none")
-
-    # Softmax-weighted average across the top-K
+    # Softmax-weighted aggregation of top-K instance logits → one bag-level logit
     weights = torch.softmax(top_logits / max(temperature, 1e-6), dim=0)
-    return (weights * bce).sum()
+    aggregated_logit = (weights * top_logits).sum()
+
+    # BCE on the aggregated logit
+    return F.binary_cross_entropy_with_logits(
+        aggregated_logit, bag_label.float()
+    )
 
 
 def bag_bce_with_soft_topk(
